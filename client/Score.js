@@ -58,6 +58,15 @@ class Score {
 
     this.ctx.fillText(scorePadded, scoreX, y);
     this.ctx.fillText(`HI ${highScorePadded}`, highScoreX, y);
+
+    // 현재 스테이지 표시
+    const currentStage = Math.floor(this.score / 10) + 1; // 점수에 기반하여 현재 스테이지 계산
+    const stageText = `Stage ${currentStage}`; // 스테이지 텍스트 생성
+    // 중앙 위치 계산
+    const stageTextWidth = this.ctx.measureText(stageText).width;
+    const stageX = (this.canvas.width - stageTextWidth) / 2;
+
+    this.ctx.fillText(stageText, stageX, y);
   }
 }
 
