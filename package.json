@@ -1,0 +1,21 @@
+{
+  "name": "dinosaur-game",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js"
+  },
+  "repository": "https://github.com/HolySSA/dinosaur-game.git",
+  "author": "SSA <158470963+shinseongan@users.noreply.github.com>",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.21.0",
+    "socket.io": "^4.8.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "prettier": "^3.3.3"
+  }
+}
