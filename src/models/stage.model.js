@@ -12,7 +12,7 @@ export const createStage = (uuid) => {
 
 /**
  * 스테이지 불러오기
- * @param uuid 
+ * @param uuid
  */
 export const getStage = (uuid) => {
   return stages[uuid];
@@ -20,9 +20,9 @@ export const getStage = (uuid) => {
 
 /**
  * 스테이지 할당 
- * @param uuid 
+ * @param uuid userId
  * @param id stageId
- * @param timestamp 시간
+ * @param timestamp time
  */
 export const setStage = (uuid, id, timestamp) => {
   return stages[uuid].push({ id, timestamp });

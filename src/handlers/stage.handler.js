@@ -40,6 +40,8 @@ export const moveStageHandler = (userId, payload) => {
 
   // 유저의 스테이지 정보 업데이트
   setStage(userId, payload.targetStage, serverTime);
+  // 로그를 찍어 확인.
+  console.log('Stage:', getStage(userId));
 
-  return { status: 'success' };
+  return { status: 'success', currentStage: getStage(userId).id };
 };

@@ -2,6 +2,7 @@ import { CLIENT_VERSION } from '../config/constants.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 import { createStage } from '../models/stage.model.js';
+import { getGameAssets } from '../init/assets.js';
 
 /**
  * 사용자 삭제
@@ -28,9 +29,8 @@ export const handleConnection = (socket, uuid) => {
   // 스테이지 빈 배열 생성
   createStage(uuid);
 
-  // emit 메서드로 해당 유저에게 메시지를 전달할 수 있다.
-  // 현재의 경우 접속하고 나서 생성된 uuid를 바로 전달해주고 있다.
-  socket.emit('connection', { uuid: uuid });
+  // emit 메서드로 해당 유저에게 메시지 전달.
+  socket.emit('connection', { uuid: uuid, gameAssets: getGameAssets() });
 };
 
 /**

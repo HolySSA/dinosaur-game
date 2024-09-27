@@ -1,9 +1,16 @@
 import { sendEvent } from './Socket.js';
+import { getGameAssets } from './Assets.js';
+import { getCurrentStage } from './Stage.js';
 
 class Score {
   score = 0;
   HIGH_SCORE_KEY = 'highScore';
+  // 스테이지 이동 중복 방지 변수
   stageChange = true;
+  // 스테이지
+  stages = {};
+  // 유저 ID
+  currentUserId = null;
 
   constructor(ctx, scaleRatio) {
     this.ctx = ctx;
@@ -11,15 +18,38 @@ class Score {
     this.scaleRatio = scaleRatio;
   }
 
+  // 초기화 메서드
+  initialize(userId) {
+    this.currentUserId = userId;
+    
+    const assets = getGameAssets();
+    if (!assets || Object.keys(assets).length === 0) {
+      console.error('Game assets not loaded yet!');
+      return;
+    }
+
+    this.stages = assets.stages.data;
+    console.log('Initialized Score with assets:', assets);
+  }
+
+  updateScorePerSecond() {
+    const currentStageData = this.stages.find((stage) => stage.id === this.currentStage);
+    this.scorePerSecond = currentStageData ? currentStageData.scorePerSecond : 1; // 초당 점수 업데이트
+  }
+
   update(deltaTime) {
     this.score += deltaTime * 0.001;
 
     // 점수가 100점 이상이 될 시 서버에 메세지 전송
-    if (Math.floor(this.score) === 10 && this.stageChange) {
+    if (Math.floor(this.score) >= 10 && this.stageChange) {
+      // 중복 방지
       this.stageChange = false;
 
       // 1 -> 2 스테이지로 넘어감. 나중에 수정해야함
       sendEvent(11, { currentStage: 1000, targetStage: 1001 });
+
+      //this.currentStageIndex++;
+      //this.updateScorePerSecond();
     }
   }
 
@@ -60,8 +90,7 @@ class Score {
     this.ctx.fillText(`HI ${highScorePadded}`, highScoreX, y);
 
     // 현재 스테이지 표시
-    const currentStage = Math.floor(this.score / 10) + 1; // 점수에 기반하여 현재 스테이지 계산
-    const stageText = `Stage ${currentStage}`; // 스테이지 텍스트 생성
+    const stageText = `Stage 0`;
     // 중앙 위치 계산
     const stageTextWidth = this.ctx.measureText(stageText).width;
     const stageX = (this.canvas.width - stageTextWidth) / 2;
