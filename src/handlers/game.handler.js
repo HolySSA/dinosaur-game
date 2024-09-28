@@ -14,7 +14,7 @@ export const gameStart = (uuid, payload) => {
   // 이전 스테이지 비우기
   clearStage(uuid);
   // stages 배열에서 0번째 = 첫번째 스테이지 ID를 해당 유저 stage에 저장.
-  setStage(uuid, stages.data[0].id, payload.timestamp);
+  setStage(uuid, stages.data[0].id, stages.data[0].score, stages.data[0].scorePerSecond, payload.timestamp);
   // 로그를 찍어 확인.
   console.log('Stage:', getStage(uuid));
 

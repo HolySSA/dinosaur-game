@@ -47,6 +47,7 @@ let player = null;
 let ground = null;
 let cactiController = null;
 let itemController = null;
+
 // score 생성자에서 다음 스테이지를 관리하므로 export
 export let score = null;
 
