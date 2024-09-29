@@ -1,5 +1,5 @@
 import { CLIENT_VERSION } from './Constants.js';
-import { loadGameAssets } from './Assets.js';
+import { loadGameAssets, getGameAssets } from './Assets.js';
 import { setCurrentStage } from './Stage.js';
 import { score } from './index.js';
 
@@ -19,16 +19,15 @@ socket.on('response', (data) => {
 });
 
 // 처음 연결 시
-socket.on('connection', (data) => {
-  console.log('connection: ', data);
+socket.on('connection', async (data) => {
+  console.log('start connection: ', data);
 
   if (data && data.uuid) {
     userId = data.uuid;
     localStorage.setItem('userId', userId);
     // 게임 에셋 로드
     loadGameAssets(data.gameAssets);
-    // score에 초기화
-    score.initialize(userId);
+    console.log('로드한 에셋: ', getGameAssets());
   }
 });
 

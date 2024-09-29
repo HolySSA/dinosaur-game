@@ -11,8 +11,6 @@ class Score {
   stageChange = true;
   // 스테이지
   stages = null;
-  // 유저 ID
-  currentUserId = null;
   // 현재 스테이지
   currentStage = null;
   // 다음 스테이지
@@ -29,9 +27,7 @@ class Score {
   }
 
   // 초기화 메서드
-  initialize(userId) {
-    this.currentUserId = userId;
-
+  initialize() {
     const assets = getGameAssets();
     if (!assets || Object.keys(assets).length === 0) {
       console.error('게임 에셋이 로드되지 않았습니다!');
@@ -40,7 +36,7 @@ class Score {
 
     this.stages = assets.stages.data;
     if (Array.isArray(this.stages) && this.stages.length > 0) {
-      //console.log('게임 에셋 불러와서 스테이지 할당:', this.stages);
+      console.log('게임 에셋 불러와서 스테이지 할당:', this.stages);
 
       this.currentStage = this.stages[0];
       this.nextStage = this.stages[1];
@@ -84,7 +80,11 @@ class Score {
     this.score += this.scorePerSecond * deltaTime * 0.001;
 
     // 다음 스테이지 점수보다 커지면 서버 측에 다음 스테이지 요청
-    if (this.nextStageScore !== 0 && Math.floor(this.score) >= this.nextStageScore && this.stageChange) {
+    if (
+      this.nextStageScore !== 0 &&
+      Math.floor(this.score) >= this.nextStageScore &&
+      this.stageChange
+    ) {
       // 중복 방지
       this.stageChange = false;
 
@@ -111,7 +111,7 @@ class Score {
     this.score = 0;
 
     // 스테이지 리셋
-    if(this.stages) {
+    if (this.stages) {
       console.log('stages: ', this.stages);
       this.currentStage = this.stages[0];
       this.nextStage = this.stages[1];
@@ -149,7 +149,7 @@ class Score {
     this.ctx.fillText(`HI ${highScorePadded}`, highScoreX, y);
 
     // 현재 스테이지 표시
-    if(this.currentStage) {
+    if (this.currentStage) {
       const stageText = `Stage ${this.currentStage.id - 1000}`;
       // 중앙 위치 계산
       const stageTextWidth = this.ctx.measureText(stageText).width;
