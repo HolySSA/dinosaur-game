@@ -27,7 +27,9 @@ socket.on('connection', async (data) => {
     localStorage.setItem('userId', userId);
     // 게임 에셋 로드
     loadGameAssets(data.gameAssets);
-    console.log('로드한 에셋: ', getGameAssets());
+    //console.log('로드한 에셋: ', getGameAssets());
+    const gameAssets = getGameAssets();
+    setCurrentStage(gameAssets.stages.data[0]);
   }
 });
 

@@ -1,5 +1,6 @@
 import { getStage, setStage } from '../models/stage.model.js';
 import { getGameAssets } from '../init/assets.js';
+import { setUnlockedItems, clearUnlockedItems } from '../models/item.model.js';
 
 /**
  * 스테이지 이동 핸들러
@@ -50,13 +51,16 @@ export const moveStageHandler = (userId, payload) => {
   }
 
   // 게임 에셋에서 다음 스테이지(targetStage)의 존재 여부 확인
-  const { stages } = getGameAssets();
+  const { stages, itemUnlocks } = getGameAssets();
   if (!stages.data.some((stage) => stage.id === payload.targetStage.id)) {
     return { status: 'fail', message: 'Target stage does not exist' };
   }
 
   // 유저의 스테이지 정보 업데이트
   setStage(userId, payload.targetStage.id, payload.targetStage.score, payload.targetStage.scorePerSecond, serverTime);
+  // 해당 스테이지 아이템 해금
+  clearUnlockedItems(userId);
+  setUnlockedItems(userId, payload.targetStage.id, itemUnlocks);
   // 로그를 찍어 확인.
   console.log('Stage:', getStage(userId));
 

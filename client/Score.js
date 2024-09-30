@@ -1,6 +1,6 @@
 import { sendEvent } from './Socket.js';
 import { getGameAssets } from './Assets.js';
-import { getCurrentStage, setCurrentStage } from './Stage.js';
+import { setCurrentStage } from './Stage.js';
 
 // 처음 시작하면 점수 안올라가는 버그 고치기
 
@@ -30,21 +30,25 @@ class Score {
   initialize() {
     const assets = getGameAssets();
     if (!assets || Object.keys(assets).length === 0) {
-      console.error('게임 에셋이 로드되지 않았습니다!');
+      console.warn('아직 게임 에셋이 로드되지 않았습니다. 잠시 후 에셋을 불러옵니다!');
       return;
     }
 
     this.stages = assets.stages.data;
     if (Array.isArray(this.stages) && this.stages.length > 0) {
-      console.log('게임 에셋 불러와서 스테이지 할당:', this.stages);
+      //console.log('게임 에셋 불러와서 스테이지 할당:', this.stages);
 
+      // 현재 스테이지 셋팅
+      setCurrentStage(this.stages[0]);
+
+      // 초기화
       this.currentStage = this.stages[0];
       this.nextStage = this.stages[1];
       this.scorePerSecond = this.currentStage.scorePerSecond;
       this.nextStageScore = this.nextStage.score;
-      console.log('현재 스테이지:', this.currentStage.id);
-      console.log('현재 스테이지 초당 득점:', this.scorePerSecond);
-      console.log('다음 스테이지 점수:', this.nextStageScore);
+      //console.log('현재 스테이지:', this.currentStage.id);
+      //console.log('현재 스테이지 초당 득점:', this.scorePerSecond);
+      //console.log('다음 스테이지 점수:', this.nextStageScore);
     } else {
       console.error('스테이지 데이터를 불러올 수 없습니다. this.stages:', this.stages);
       this.currentStage = null;
@@ -59,6 +63,9 @@ class Score {
 
     // 다음 스테이지 존재 시
     if (nextStageIndex < this.stages.length) {
+      // 외부에서 사용할 stage 업데이트
+      setCurrentStage(this.stages[nextStageIndex]);
+
       // 현재 스테이지 업데이트
       this.currentStage = this.stages[nextStageIndex];
       this.nextStage =
@@ -67,9 +74,9 @@ class Score {
       this.nextStageScore =
         nextStageIndex + 1 < this.stages.length ? this.stages[nextStageIndex + 1].score : Infinity;
 
-      console.log(`현재 스테이지: ${this.currentStage.id}`);
-      console.log('현재 스테이지 초당 득점:', this.scorePerSecond);
-      console.log('다음 스테이지 점수:', this.nextStageScore);
+      //console.log(`현재 스테이지: ${this.currentStage.id}`);
+      //console.log('현재 스테이지 초당 득점:', this.scorePerSecond);
+      //console.log('다음 스테이지 점수:', this.nextStageScore);
     } else {
       // 마지막 스테이지일 경우
       console.log('더 이상 다음 스테이지가 없습니다.');
@@ -104,7 +111,15 @@ class Score {
   }
 
   getItem(itemId) {
-    this.score += 0;
+    const assets = getGameAssets();
+    const itemsData = assets.items.data;
+    const itemScore = itemsData.find((item) => item.id == itemId).score;
+
+    console.log('itemId: ', itemId, 'itemScore: ', itemScore);
+    this.score += itemScore;
+
+    // 서버로 아이템 습득 요청 (payload: itemId, itemScore)
+    sendEvent(21, { itemId, itemScore });
   }
 
   reset() {
@@ -112,7 +127,11 @@ class Score {
 
     // 스테이지 리셋
     if (this.stages) {
-      console.log('stages: ', this.stages);
+      //console.log('stages: ', this.stages);
+
+      // 외부에서 사용할 stage 업데이트
+      setCurrentStage(this.stages[0]);
+
       this.currentStage = this.stages[0];
       this.nextStage = this.stages[1];
       this.scorePerSecond = this.currentStage.scorePerSecond;

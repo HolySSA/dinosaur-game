@@ -1,4 +1,4 @@
-let currentStage;
+let currentStage = null;
 
 /**
  * 현재 스테이지

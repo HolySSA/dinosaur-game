@@ -1,6 +1,7 @@
 import { getGameAssets } from '../init/assets.js';
 import { getStage, setStage } from '../models/stage.model.js';
 import { clearStage } from '../models/stage.model.js';
+import { setUnlockedItems, clearUnlockedItems, clearGotItems } from '../models/item.model.js';
 
 /**
  * 게임 시작 함수
@@ -10,13 +11,18 @@ import { clearStage } from '../models/stage.model.js';
  */
 export const gameStart = (uuid, payload) => {
   // 서버 메모리에 있는 게임 에셋에서 stage 정보를 가지고 온다.
-  const { stages } = getGameAssets();
+  const { stages, itemUnlocks } = getGameAssets();
   // 이전 스테이지 비우기
   clearStage(uuid);
+  // 스테이지 별 아이템, 습득 아이템 비우기
+  clearUnlockedItems(uuid);
+  clearGotItems(uuid);
   // stages 배열에서 0번째 = 첫번째 스테이지 ID를 해당 유저 stage에 저장.
   setStage(uuid, stages.data[0].id, stages.data[0].score, stages.data[0].scorePerSecond, payload.timestamp);
   // 로그를 찍어 확인.
   console.log('Stage:', getStage(uuid));
+  // 첫번째 스테이지 아이템 해금
+  setUnlockedItems(uuid, stages.data[0].id, itemUnlocks);
 
   return { status: 'success' };
 };

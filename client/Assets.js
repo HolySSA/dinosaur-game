@@ -15,6 +15,6 @@ export const loadGameAssets = (assets) => {
 };
 
 export const getGameAssets = () => {
-  console.log('Current game assets:', gameAssets);
+  //console.log('Current game assets:', gameAssets);
   return gameAssets;
 };

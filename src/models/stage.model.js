@@ -27,11 +27,12 @@ export const getStage = (uuid) => {
  * @param timestamp time
  */
 export const setStage = (uuid, id, score, scorePerSecond, timestamp) => {
-  return stages[uuid].push({ id, score, scorePerSecond, timestamp });
+  stages[uuid].push({ id, score, scorePerSecond, timestamp });
+  return;
 };
 
 /**
- * 스테이지 비우기 (새로 시작 시)
+ * 스테이지 초기화 (새로 시작 시)
  * @param uuid
  */
 export const clearStage = (uuid) => {
