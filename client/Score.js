@@ -118,8 +118,8 @@ class Score {
     console.log('itemId: ', itemId, 'itemScore: ', itemScore);
     this.score += itemScore;
 
-    // 서버로 아이템 습득 요청 (payload: itemId, itemScore)
-    sendEvent(21, { itemId, itemScore });
+    // 서버로 아이템 습득 요청 (payload: stageId, itemId, itemScore)
+    sendEvent(21, { stageId: this.currentStage.id, itemId, itemScore });
   }
 
   reset() {

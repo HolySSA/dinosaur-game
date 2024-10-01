@@ -46,7 +46,7 @@ export function clearUnlockedItems(uuid) {
  * @param itemId - 습득한 아이템 ID
  * @param timestamp - 습득된 시간
  */
-export function addGotItem(uuid, itemId, timestamp) {
+export function addGotItem(uuid, stageId, itemId, timestamp) {
   if (!gotItems[uuid]) {
     gotItems[uuid] = [];
   }
@@ -54,7 +54,7 @@ export function addGotItem(uuid, itemId, timestamp) {
   // 해금된 아이템 목록에 해당 아이템이 있는지 확인
   const unlockedItemsList = getUnlockedItems(uuid);
   if (unlockedItemsList.some((item) => item.id === itemId)) {
-    gotItems[uuid].push({ id: itemId, timestamp });
+    gotItems[uuid].push({ stage: stageId, id: itemId, timestamp });
   } else {
     console.log(`fail! 현재 스테이지에서 아이템 ${itemId}는 해금되지 않았습니다.`);
   }

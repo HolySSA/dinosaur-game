@@ -30,6 +30,7 @@ socket.on('connection', async (data) => {
     //console.log('로드한 에셋: ', getGameAssets());
     const gameAssets = getGameAssets();
     setCurrentStage(gameAssets.stages.data[0]);
+    score.initialize();
   }
 });
 

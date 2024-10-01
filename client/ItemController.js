@@ -20,7 +20,6 @@ class ItemController {
   }
 
   setNextItemTime(itemId) {
-    // respawn 시간 ~ + 10초 정도로 해서 랜덤값으로 nextInterval에 넣기
     let respawn;
     try {
       const assets = getGameAssets();
@@ -29,9 +28,10 @@ class ItemController {
     } catch {
       respawn = 5;
     }
-
-    console.log('respawn: ', respawn);
-    this.nextInterval = respawn * 1000;
+  
+    //console.log('respawn: ', respawn);
+    const randomAdditionalTime = Math.floor(Math.random() * 11);
+    this.nextInterval = (respawn + randomAdditionalTime) * 1000;
   }
 
   getRandomNumber(min, max) {
@@ -40,14 +40,14 @@ class ItemController {
 
   createItem() {
     const assets = getGameAssets();
-    console.log('assets: ', assets);
+    //console.log('assets: ', assets);
     const currentStage = getCurrentStage();
-    console.log('현재 스테이지: ', currentStage);
+    //console.log('현재 스테이지: ', currentStage);
     const currentStageItemUnlock = assets.itemUnlocks.data.find((entry) => entry.stage_id === currentStage.id);
     const currentStageItemIds = currentStageItemUnlock ? currentStageItemUnlock.item_id : [];
 
     // 해금된 아이템 ID 출력
-    console.log('현재 스테이지에서 해금된 아이템 ID:', currentStageItemIds);
+    console.log('현재 스테이지에서 등장할 수 있는 아이템 ID:', currentStageItemIds);
 
     const index = this.getRandomNumber(0, currentStageItemIds.length - 1);
     const selectedItemId = currentStageItemIds[index];
