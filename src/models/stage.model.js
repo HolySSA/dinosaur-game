@@ -4,7 +4,7 @@ const stages = {};
 
 /**
  * 초기 스테이지 배열 생성(초기화)
- * @param uuid 
+ * @param uuid
  */
 export const createStage = (uuid) => {
   stages[uuid] = [];
@@ -15,11 +15,13 @@ export const createStage = (uuid) => {
  * @param uuid
  */
 export const getStage = (uuid) => {
+  if (!stages[uuid]) stages[uuid] = [];
+
   return stages[uuid];
 };
 
 /**
- * 스테이지 할당 
+ * 스테이지 할당
  * @param uuid userId
  * @param id stageId
  * @param score 시작 점수
@@ -36,5 +38,5 @@ export const setStage = (uuid, id, score, scorePerSecond, timestamp) => {
  * @param uuid
  */
 export const clearStage = (uuid) => {
-  return stages[uuid] = [];
-}
+  return (stages[uuid] = []);
+};

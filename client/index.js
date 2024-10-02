@@ -218,7 +218,10 @@ function gameLoop(currentTime) {
 
   if (!gameover && cactiController.collideWith(player)) {
     gameover = true;
+    // 최고 점수 갱신 로직 수행
     score.setHighScore();
+    // 서버로 게임 종료 요청
+    sendEvent(3, { timestamp: Date.now(), score: score.getScore() });
     setupGameReset();
   }
   const collideWithItem = itemController.collideWith(player);

@@ -24,7 +24,6 @@ export const moveStageHandler = (userId, payload) => {
     return { status: 'fail', message: 'Current stage mismatch' };
   }
 
-  
   const { stages, items, itemUnlocks } = getGameAssets();
 
   // 점수 검증 로직

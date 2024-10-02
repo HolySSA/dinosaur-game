@@ -1,6 +1,7 @@
 import { sendEvent } from './Socket.js';
 import { getGameAssets } from './Assets.js';
 import { setCurrentStage } from './Stage.js';
+import { getHighScore, setHighScore } from './HighScore.js';
 
 // 처음 시작하면 점수 안올라가는 버그 고치기
 
@@ -140,9 +141,9 @@ class Score {
   }
 
   setHighScore() {
-    const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY));
+    const highScore = getHighScore();
     if (this.score > highScore) {
-      localStorage.setItem(this.HIGH_SCORE_KEY, Math.floor(this.score));
+      setHighScore(this.score);
     }
   }
 
@@ -151,7 +152,7 @@ class Score {
   }
 
   draw() {
-    const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY));
+    const highScore = getHighScore();
     const y = 20 * this.scaleRatio;
 
     const fontSize = 20 * this.scaleRatio;

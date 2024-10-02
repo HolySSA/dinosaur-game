@@ -26,13 +26,3 @@ export const removeUser = (socketId) => {
 export const getUsers = () => {
   return users;
 };
-
-/**
- * 유저 번호 조회
- * @param {string} uuid - 유저 고유 ID
- * @returns {number} idx - 유저의 인덱스, 없으면 -1
- */
-export const getUserIndex = (uuid) => {
-  const idx = users.findIndex((user) => user.uuid === uuid);
-  return idx;
-};

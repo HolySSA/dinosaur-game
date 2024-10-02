@@ -3,6 +3,8 @@ import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 import { createStage } from '../models/stage.model.js';
 import { getGameAssets } from '../init/assets.js';
+import { getHighScore } from '../models/score.model.js';
+import { getUUID } from '../models/uuid.model.js';
 
 /**
  * 사용자 삭제
@@ -29,8 +31,13 @@ export const handleConnection = (socket, uuid) => {
   // 스테이지 빈 배열 생성
   createStage(uuid);
 
+  const uuidInfo = getUUID(uuid);
+  let message;
+  if (uuidInfo.isHighScored) message = '반갑습니다, 현재 최고 기록 보유 중입니다!';
+  else message = '반갑습니다, 최고 기록에 도전하세요!';
+
   // emit 메서드로 해당 유저에게 메시지 전달.
-  socket.emit('connection', { uuid: uuid, gameAssets: getGameAssets() });
+  socket.emit('connection', { message: message, uuid: uuid, gameAssets: getGameAssets(), highScore: getHighScore() });
 };
 
 /**
@@ -59,7 +66,8 @@ export const handleEvent = (io, socket, data) => {
   const response = handler(data.userId, data.payload);
   // 만약 결과에 broadcast(모든 유저에게 전달)가 있다면 broadcast.
   if (response.broadcast) {
-    io.emit('response', 'broadcast');
+    io.emit('response', response);
+    console.log(`모든 유저에게 전송: ${response.highScore}`);
     return;
   }
 
