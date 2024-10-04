@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { addUser } from '../models/user.model.js';
 import { handleDisconnect, handleConnection, handleEvent } from '../utils/handlerUtils.js';
-import { createStage } from '../models/stage.model.js';
 import { addUUID } from '../models/uuid.model.js';
 
 /**
@@ -16,7 +15,6 @@ const registerHandler = (io) => {
     // user, uuid, stage 생성
     addUser({ uuid: userUUID, socketId: socket.id });
     addUUID(userUUID);
-    createStage(userUUID);
 
     // 접속시 유저 정보 생성 이벤트 처리
     handleConnection(socket, userUUID);
