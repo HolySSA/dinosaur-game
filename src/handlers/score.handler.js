@@ -1,13 +1,15 @@
 import { getHighScore, setHighScore } from '../models/score.model.js';
 import { updateUUId } from '../models/uuid.model.js';
 
-export const updateHighScore = (uuid, payload) => {
+export const updateHighScore = async (uuid, payload) => {
   //console.log('highScore: ', getHighScore());
   //console.log('cur Score: ', Math.floor(payload.score));
   
-  if (setHighScore(Math.floor(payload.score))) {
-    updateUUId(uuid);
-    return { broadcast: true, status: "success", message: '게임 종료... 최고 점수 갱신!', highScore: getHighScore() };
+  const isHighScore = await setHighScore(Math.floor(payload.score));
+  if (isHighScore) {
+    await updateUUId(uuid);
+    const currentHighScore = await getHighScore();
+    return { broadcast: true, status: "success", message: '게임 종료... 최고 점수 갱신!', highScore: currentHighScore };
   }
 
   return null;

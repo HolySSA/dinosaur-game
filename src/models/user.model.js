@@ -1,28 +1,41 @@
-const users = [];
+import redisClient from "../redis/redis.client.js";
+
+const usersKey = "users";
 
 /**
- * 서버 메모리에 유저의 세션(소켓ID)을 저장.
- * 유저는 객체 형태로 : { uuid: string; socketId: string; };
  * @param user
  */
-export const addUser = (user) => {
+export const addUser = async (user) => {
+  const usersJSON = await redisClient.get(usersKey);
+  const users = usersJSON ? JSON.parse(usersJSON) : [];
+
   users.push(user);
+
+	await redisClient.set(usersKey, JSON.stringify(users));
 };
 
 /**
  * 배열에서 유저 삭제
  * @param socketId
  */
-export const removeUser = (socketId) => {
+export const removeUser = async (socketId) => {
+  const usersJSON = await redisClient.get(usersKey);
+  const users = usersJSON ? JSON.parse(usersJSON) : [];
+
   const index = users.findIndex((user) => user.socketId === socketId);
   if (index !== -1) {
-    return users.splice(index, 1)[0];
+    users.splice(index, 1);
   }
+
+	await redisClient.set(usersKey, JSON.stringify(users));
 };
 
 /**
  * 전체 유저 조회
  */
-export const getUsers = () => {
+export const getUsers = async () => {
+  const usersJSON = await redisClient.get(usersKey);
+  const users = usersJSON ? JSON.parse(usersJSON) : [];
+
   return users;
 };

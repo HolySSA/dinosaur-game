@@ -9,12 +9,12 @@ import { addUUID } from '../models/uuid.model.js';
  */
 const registerHandler = (io) => {
   // 최초 커넥션을 맺은 이후 발생하는 각종 이벤트를 처리
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     // UUID 생성 -> 사용자 추가 -> 스테이지 생성
     const userUUID = uuidv4();
     // user, uuid, stage 생성
-    addUser({ uuid: userUUID, socketId: socket.id });
-    addUUID(userUUID);
+    await addUser({ uuid: userUUID, socketId: socket.id });
+    await addUUID(userUUID);
 
     // 접속시 유저 정보 생성 이벤트 처리
     handleConnection(socket, userUUID);

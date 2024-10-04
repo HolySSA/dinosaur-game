@@ -8,8 +8,8 @@ import { getStage } from '../models/stage.model.js';
  * @param payload - client에서 요청한 정보
  * @returns
  */
-export const getItemhandler = (userId, payload) => {
-  const { items, itemUnlocks } = getGameAssets();
+export const getItemhandler = async (userId, payload) => {
+  const { items, itemUnlocks } = await getGameAssets();
 
   // 습득한 아이템 ID 체크
   if (!items.data.some((item) => item.id === payload.itemId)) {
@@ -24,7 +24,7 @@ export const getItemhandler = (userId, payload) => {
   }
 
   // 지금까지 유저가 습득했던 아이템 리스트 체크
-  let currentGotItems = getGotItems(userId);
+  let currentGotItems = await getGotItems(userId);
   if (!currentGotItems) {
     return { status: 'fail', message: '해당 유저의 습득 아이템 목록을 찾을 수 없습니다.' };
   }
@@ -59,10 +59,11 @@ export const getItemhandler = (userId, payload) => {
     };
   }
 
-  addGotItem(userId, payload.stageId, payload.itemId, serverTime);
+  await addGotItem(userId, payload.stageId, payload.itemId, serverTime);
 
+  const gotItemsData = await getGotItems(userId);
   // 로그를 찍어 확인.
-  console.log('GotItems:', getGotItems(userId));
+  console.log('GotItems:', gotItemsData);
 
   return { status: 'success', message: `${payload.itemId}번 아이템을 획득하였습니다.` };
 };

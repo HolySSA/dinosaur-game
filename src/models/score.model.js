@@ -1,24 +1,30 @@
-const HIGH_SCORE_KEY = 'highScore';
+import redisClient from '../redis/redis.client.js';
 
-let highScore = 0;
+const highScoreKey = 'highScore';
 
 /**
  * 최고 점수 불러오기
  * @returns {number} 현재 최고 점수
  */
-export const getHighScore = () => {
-  return highScore;
+export const getHighScore = async () => {
+  const highScore = await redisClient.get(highScoreKey);
+
+  return highScore ? parseInt(highScore, 10) : 0;
 };
 
 /**
  * 최고 점수 할당하기
  * @param {number} newHighScore 새로운 최고 점수
  */
-export const setHighScore = (newHighScore) => {
-  if (newHighScore > highScore) {
-    highScore = newHighScore;
+export const setHighScore = async (newHighScore) => {
+  const currentHighScore = await getHighScore();
+
+  if (newHighScore > currentHighScore) {
+    await redisClient.set(highScoreKey, newHighScore.toString());
     return true;
   }
 
+  console.log('현재기록: ', newHighScore);
+  console.log('최고기록: ', currentHighScore);
   return false;
 };

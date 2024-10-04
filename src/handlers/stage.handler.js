@@ -8,9 +8,9 @@ import { getGotItems } from '../models/item.model.js';
  * @param userId
  * @param payload
  */
-export const moveStageHandler = (userId, payload) => {
+export const moveStageHandler = async (userId, payload) => {
   // 유저의 현재 스테이지 배열을 가져오고, 최대 스테이지 ID를 찾는다.
-  let currentStages = getStage(userId);
+  let currentStages = await getStage(userId);
   if (!currentStages.length) {
     return { status: 'fail', message: 'No stages found for user' };
   }
@@ -24,7 +24,7 @@ export const moveStageHandler = (userId, payload) => {
     return { status: 'fail', message: 'Current stage mismatch' };
   }
 
-  const { stages, items, itemUnlocks } = getGameAssets();
+  const { stages, items, itemUnlocks } = await getGameAssets();
 
   // 점수 검증 로직
   const serverTime = Date.now();
@@ -34,7 +34,7 @@ export const moveStageHandler = (userId, payload) => {
   const clientScore = payload.score;
 
   // 지금까지 습득한 아이템
-  const gotItems = getGotItems(userId);
+  const gotItems = await getGotItems(userId);
   // 지금까지 습득한 아이템 점수를 계산
   let stageItemScore = 0;
   if (gotItems.length !== 0) {
@@ -72,7 +72,7 @@ export const moveStageHandler = (userId, payload) => {
   }
 
   // 유저의 스테이지 정보 업데이트
-  setStage(
+  await setStage(
     userId,
     payload.targetStage.id,
     payload.targetStage.score,
@@ -80,10 +80,12 @@ export const moveStageHandler = (userId, payload) => {
     serverTime,
   );
   // 해당 스테이지 아이템 해금
-  clearUnlockedItems(userId);
-  setUnlockedItems(userId, payload.targetStage.id, itemUnlocks);
-  // 로그를 찍어 확인.
-  console.log('Stage:', getStage(userId));
+  await clearUnlockedItems(userId);
+  await setUnlockedItems(userId, payload.targetStage.id, itemUnlocks);
 
-  return { status: 'success', currentStage: getStage(userId).id };
+  const stageData = await getStage(userId);
+  // 로그를 찍어 확인.
+  console.log('Stage:', stageData);
+
+  return { status: 'success', currentStage: stageData.id };
 };

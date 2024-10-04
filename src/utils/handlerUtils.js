@@ -1,22 +1,30 @@
 import { CLIENT_VERSION } from '../config/constants.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
-import { createStage } from '../models/stage.model.js';
+import { createStage, clearStage } from '../models/stage.model.js';
 import { getGameAssets } from '../init/assets.js';
 import { getHighScore } from '../models/score.model.js';
 import { getUUID } from '../models/uuid.model.js';
+import { clearUnlockedItems, clearGotItems } from '../models/item.model.js';
 
 /**
  * 사용자 삭제
  * @param socket
  * @param uuid
  */
-export const handleDisconnect = (socket, uuid) => {
+export const handleDisconnect = async (socket, uuid) => {
   // 사용자 삭제
-  removeUser(socket.id);
+  await removeUser(socket.id);
+  // 스테이지 비우기
+  await clearStage(uuid);
+  // 해금된 아이템 비우기
+  await clearUnlockedItems(uuid);
+  // 얻은 아이템 비우기
+  await clearGotItems(uuid);
 
   console.log(`User disconnected: ${socket.id}`);
-  console.log('Current users:', getUsers());
+  const users = await getUsers();
+  console.log('Current users:', users);
 };
 
 /**
@@ -24,20 +32,23 @@ export const handleDisconnect = (socket, uuid) => {
  * @param socket
  * @param uuid
  */
-export const handleConnection = (socket, uuid) => {
+export const handleConnection = async (socket, uuid) => {
   console.log(`New user connected: ${uuid} with socket ID ${socket.id}`);
-  console.log('Current users:', getUsers());
+  const users = await getUsers();
+  console.log('Current users:', users);
 
   // 스테이지 빈 배열 생성
-  createStage(uuid);
+  await createStage(uuid);
 
-  const uuidInfo = getUUID(uuid);
+  const uuidInfo = await getUUID(uuid);
   let message;
   if (uuidInfo.isHighScored) message = '반갑습니다, 현재 최고 기록 보유 중입니다!';
   else message = '반갑습니다, 최고 기록에 도전하세요!';
 
-  // emit 메서드로 해당 유저에게 메시지 전달.
-  socket.emit('connection', { message: message, uuid: uuid, gameAssets: getGameAssets(), highScore: getHighScore() });
+  const currentHighScore = await getHighScore();
+  const gameAssets = await getGameAssets();
+  // emit 메서드로 해당 유저에게 메시지 전달
+  socket.emit('connection', { message: message, uuid: uuid, gameAssets: gameAssets, highScore: currentHighScore });
 };
 
 /**
@@ -46,25 +57,25 @@ export const handleConnection = (socket, uuid) => {
  * @param socket
  * @param data
  */
-export const handleEvent = (io, socket, data) => {
-  // 서버에 저장된 클라이언트 배열에서 메세지로 받은 클라이언트 버전 확인.
+export const handleEvent = async (io, socket, data) => {
+  // 서버에 저장된 클라이언트 배열에서 메세지로 받은 클라이언트 버전 확인
   if (!CLIENT_VERSION.includes(data.clientVersion)) {
-    // 일치하는 버전이 없다면 response 이벤트로 fail 결과 전송.
+    // 일치하는 버전이 없다면 response 이벤트로 fail 결과 전송
     socket.emit('response', { status: 'fail', message: 'Client version mismatch' });
     return;
   }
 
   // 메세지로 오는 handlerId에 따라 handlerMappings 객체에서 적절한 핸들러를 찾기.
   const handler = handlerMappings[data.handlerId];
-  // 적절한 핸들러가 없다면 실패처리.
+  // 적절한 핸들러가 없다면 실패처리
   if (!handler) {
     socket.emit('response', { status: 'fail', message: 'Handler not found' });
     return;
   }
 
-  // 적절한 핸들러에 userID, payload를 전달하고 결과 받기.
-  const response = handler(data.userId, data.payload);
-  // 만약 결과에 broadcast(모든 유저에게 전달)가 있다면 broadcast.
+  // 적절한 핸들러에 userID, payload를 전달하고 결과 받기
+  const response = await handler(data.userId, data.payload);
+  // 만약 결과에 broadcast(모든 유저에게 전달)가 있다면 broadcast
   if (response.broadcast) {
     io.emit('response', response);
     console.log(`모든 유저에게 전송: ${response.highScore}`);
