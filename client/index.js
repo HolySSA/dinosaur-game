@@ -41,7 +41,7 @@ const ITEM_CONFIG = [
   { width: 50 / 1.5, height: 50 / 1.5, id: 3, image: 'images/items/pokeball_purple.png' },
   { width: 50 / 1.5, height: 50 / 1.5, id: 4, image: 'images/items/pokeball_cyan.png' },
   { width: 50 / 1.5, height: 50 / 1.5, id: 5, image: 'images/items/pokeball_orange.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 6, image: 'images/items/pokeball_pink.png' }
+  { width: 50 / 1.5, height: 50 / 1.5, id: 6, image: 'images/items/pokeball_pink.png' },
 ];
 
 // 게임 요소들
@@ -178,7 +178,7 @@ function setupGameReset() {
     hasAddedEventListenersForRestart = true;
 
     setTimeout(() => {
-      window.addEventListener('keyup', reset, { once: true });
+      window.addEventListener('keyup', startGame, { once: true });
     }, 1000);
   }
 }
@@ -251,4 +251,14 @@ function gameLoop(currentTime) {
 // 게임 프레임을 다시 그리는 메서드
 requestAnimationFrame(gameLoop);
 
-window.addEventListener('keyup', reset, { once: true });
+function startGame(event) {
+  // 스페이스 누를 경우만 게임 시작
+  if (waitingToStart || gameover) {
+    if (event.code === 'Space') {
+      reset();
+    }
+  }
+}
+
+// 스페이스바를 누를 때만 게임 시작하게 만들기. 지금 다른키 눌렸다가 스페이스 누르면 시작 X
+window.addEventListener('keyup', startGame, { once: true });
