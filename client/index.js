@@ -59,6 +59,7 @@ let gameSpeed = GAME_SPEED_START;
 let gameover = false;
 let hasAddedEventListenersForRestart = false;
 let waitingToStart = true;
+let canRestart = true;
 
 function createSprites() {
   // 비율에 맞는 크기
@@ -178,6 +179,7 @@ function setupGameReset() {
     hasAddedEventListenersForRestart = true;
 
     setTimeout(() => {
+      canRestart = true;
       window.addEventListener('keyup', startGame, { once: true });
     }, 1000);
   }
@@ -251,14 +253,25 @@ function gameLoop(currentTime) {
 // 게임 프레임을 다시 그리는 메서드
 requestAnimationFrame(gameLoop);
 
+
+// 스페이스 or 클릭 했을 경우 게임 실행
 function startGame(event) {
   // 스페이스 누를 경우만 게임 시작
-  if (waitingToStart || gameover) {
+  if ((waitingToStart || gameover) && canRestart) {
     if (event.code === 'Space') {
+      canRestart = false;
       reset();
     }
   }
 }
 
-// 스페이스바를 누를 때만 게임 시작하게 만들기. 지금 다른키 눌렸다가 스페이스 누르면 시작 X
-window.addEventListener('keyup', startGame, { once: true });
+if(!gameover) {
+  window.addEventListener('keyup', startGame);
+}
+
+canvas.addEventListener('click', () => {
+  if ((waitingToStart || gameover) && canRestart) {
+    canRestart = false;
+    reset();
+  }
+});
