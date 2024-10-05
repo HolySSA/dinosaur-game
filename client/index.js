@@ -4,6 +4,7 @@ import CactiController from './CactiController.js';
 import Score from './Score.js';
 import ItemController from './ItemController.js';
 import { sendEvent } from './Socket.js';
+import BirdController from './BirdController.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -34,6 +35,12 @@ const CACTI_CONFIG = [
   { width: 68 / 1.5, height: 70 / 1.5, image: 'images/cactus_3.png' },
 ];
 
+// 새
+const BIRD_CONFIG = [
+  { width: 98 / 1.5, height: 100 / 1.5, image: 'images/bird_1.png' },
+  { width: 98 / 1.5, height: 100 / 1.5, image: 'images/bird_2.png' },
+];
+
 // 아이템
 const ITEM_CONFIG = [
   { width: 50 / 1.5, height: 50 / 1.5, id: 1, image: 'images/items/pokeball_red.png' },
@@ -48,6 +55,7 @@ const ITEM_CONFIG = [
 let player = null;
 let ground = null;
 let cactiController = null;
+let birdController = null;
 let itemController = null;
 
 // score 생성자에서 다음 스테이지를 관리하므로 export
@@ -95,6 +103,18 @@ function createSprites() {
   });
 
   cactiController = new CactiController(ctx, cactiImages, scaleRatio, GROUND_SPEED);
+
+  const birdImages = BIRD_CONFIG.map((bird) => {
+    const image = new Image();
+    image.src = bird.image;
+    return {
+      image,
+      width: bird.width * scaleRatio,
+      height: bird.height * scaleRatio,
+    };
+  });
+
+  birdController = new BirdController(ctx, birdImages, scaleRatio, GROUND_SPEED);
 
   const itemImages = ITEM_CONFIG.map((item) => {
     const image = new Image();
@@ -168,6 +188,7 @@ function reset() {
 
   ground.reset();
   cactiController.reset();
+  birdController.reset();
   score.reset();
   gameSpeed = GAME_SPEED_START;
   // 게임시작 핸들러ID 2, payload 에는 게임 시작 시간
@@ -210,6 +231,7 @@ function gameLoop(currentTime) {
     ground.update(gameSpeed, deltaTime);
     // 선인장
     cactiController.update(gameSpeed, deltaTime);
+    birdController.update(gameSpeed, deltaTime);
     itemController.update(gameSpeed, deltaTime);
     // 달리기
     player.update(gameSpeed, deltaTime);
@@ -218,7 +240,7 @@ function gameLoop(currentTime) {
     score.update(deltaTime);
   }
 
-  if (!gameover && cactiController.collideWith(player)) {
+  if (!gameover && (cactiController.collideWith(player) || birdController.collideWith(player))) {
     gameover = true;
     // 최고 점수 갱신 로직 수행
     score.setHighScore();
@@ -234,6 +256,7 @@ function gameLoop(currentTime) {
   // draw
   player.draw();
   cactiController.draw();
+  birdController.draw();
   ground.draw();
   score.draw();
   itemController.draw();
@@ -253,7 +276,6 @@ function gameLoop(currentTime) {
 // 게임 프레임을 다시 그리는 메서드
 requestAnimationFrame(gameLoop);
 
-
 // 스페이스 or 클릭 했을 경우 게임 실행
 function startGame(event) {
   // 스페이스 누를 경우만 게임 시작
@@ -265,7 +287,7 @@ function startGame(event) {
   }
 }
 
-if(!gameover) {
+if (!gameover) {
   window.addEventListener('keyup', startGame);
 }
 
