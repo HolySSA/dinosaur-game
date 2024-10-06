@@ -2,8 +2,8 @@ import Bird from './Bird.js';
 
 // 공룡 달리는 것처럼 새도 날개짓하는 걸로 수정
 class BirdController {
-  BIRD_INTERVAL_MIN = 3000;
-  BIRD_INTERVAL_MAX = 5000;
+  BIRD_INTERVAL_MIN = 5000;
+  BIRD_INTERVAL_MAX = 10000;
 
   nextBirdInterval = null;
   birds = [];
@@ -27,12 +27,11 @@ class BirdController {
   }
 
   createBird() {
-    const index = this.getRandomNumber(0, this.birdImages.length - 1);
-    const birdImage = this.birdImages[index];
+    const birdImage = this.birdImages[0];
     const x = this.canvas.width * 1.5;
     const y = this.getRandomNumber(10, this.canvas.height - birdImage.height);
 
-    const bird = new Bird(this.ctx, x, y, birdImage.width, birdImage.height, birdImage.image);
+    const bird = new Bird(this.ctx, x, y, birdImage.width, birdImage.height, this.birdImages);
 
     this.birds.push(bird);
   }

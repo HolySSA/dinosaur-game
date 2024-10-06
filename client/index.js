@@ -114,7 +114,7 @@ function createSprites() {
     };
   });
 
-  birdController = new BirdController(ctx, birdImages, scaleRatio, GROUND_SPEED);
+  birdController = new BirdController(ctx, birdImages, scaleRatio, GROUND_SPEED * 1.5);
 
   const itemImages = ITEM_CONFIG.map((item) => {
     const image = new Image();
