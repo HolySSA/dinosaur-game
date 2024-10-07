@@ -4,12 +4,12 @@
 
 ## Stage 구분
 
-서버<br><br>
+서버<br>
 
 [stage.handler.js](src/handlers/stage.handler.js)<br>
 [stage.model.js](src/models/stage.model.js)<br>
 
-클라이언트<br><br>
+클라이언트<br>
 
 [Stage.js](client/Stage.js)<br>
 [Score.js](client/Score.js)<br>
@@ -25,11 +25,11 @@
 
 ## 아이템 획득 시 점수 획득
 
-서버<br><br>
+서버<br>
 [item.handler.js](src/handlers/item.handler.js)<br>
 [item.model.js](src/models/item.model.js)<br>
 
-클라이언트<br><br>
+클라이언트<br>
 [Score.js](client/Score.js)<br>
 [index.js](client/index.js)<br>
 
