@@ -2,15 +2,21 @@
 
 플랫포머 게임 **"Dinosaur Game"**을 구현해보자! 이 프로젝트는 Chrome Dino 게임의 모작입니다. 간단한 게임을 통해 기본적인 게임 메커니즘과 클라이언트-서버 간의 상호작용을 이해할 수 있습니다.
 
+# 게임 시작
+
+- yarn dev (개발자)
+
+# 기능
+
+필수, 도전 기능
+
 ## Stage 구분
 
 서버<br>
-
 [stage.handler.js](src/handlers/stage.handler.js)<br>
 [stage.model.js](src/models/stage.model.js)<br>
 
 클라이언트<br>
-
 [Stage.js](client/Stage.js)<br>
 [Score.js](client/Score.js)<br>
 [index.js](client/index.js)<br>
