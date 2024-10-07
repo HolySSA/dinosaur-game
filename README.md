@@ -26,12 +26,10 @@
 ## 아이템 획득 시 점수 획득
 
 서버<br><br>
-
 [item.handler.js](src/handlers/item.handler.js)<br>
 [item.model.js](src/models/item.model.js)<br>
 
 클라이언트<br><br>
-
 [Score.js](client/Score.js)<br>
 [index.js](client/index.js)<br>
 
