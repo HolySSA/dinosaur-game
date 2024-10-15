@@ -4,8 +4,8 @@ import { setCurrentStage } from './Stage.js';
 import { getHighScore, setHighScore } from './HighScore.js';
 import { score } from './index.js';
 
-// 소켓을 http://localhost:3000 주소로
-const socket = io('http://52.79.242.227:3000', {
+// 소켓을 http://ip 주소:3000 주소로
+const socket = io('http://localhost:3000', {
   query: {
     clientVersion: CLIENT_VERSION,
   },

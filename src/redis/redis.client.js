@@ -1,8 +1,8 @@
 import { createClient } from 'redis';
 
 const redisClient = createClient({
-  // localhost:6379
-  url: 'redis://52.79.242.227:6379',
+  // ip주소:6379
+  url: 'redis://localhost:6379',
 });
 
 redisClient.on('connect', () => {
